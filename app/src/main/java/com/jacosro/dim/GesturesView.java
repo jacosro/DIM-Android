@@ -115,7 +115,6 @@ public class GesturesView extends View {
         this.paint.setColor(Color.BLACK);
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setStrokeJoin(Paint.Join.ROUND);
-        // this.paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     @Override
