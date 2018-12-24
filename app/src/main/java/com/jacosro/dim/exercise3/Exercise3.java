@@ -1,4 +1,4 @@
-package com.jacosro.dim;
+package com.jacosro.dim.exercise3;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,29 +9,28 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DrawView extends View {
+public class Exercise3 extends View {
 
     private Map<Integer, Finger> fingers;
     private Paint removePaint;
 
-    public DrawView(Context context) {
+    public Exercise3(Context context) {
         super(context);
 
         init();
     }
 
-    public DrawView(Context context, AttributeSet attrs) {
+    public Exercise3(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         init();
     }
 
-    public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Exercise3(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         init();

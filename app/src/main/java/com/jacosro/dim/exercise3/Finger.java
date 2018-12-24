@@ -1,4 +1,4 @@
-package com.jacosro.dim;
+package com.jacosro.dim.exercise3;
 
 import android.graphics.Color;
 import android.graphics.Paint;

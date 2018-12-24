@@ -1,4 +1,4 @@
-package com.jacosro.dim;
+package com.jacosro.dim.exercise5;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,25 +16,25 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GesturesView extends View {
+public class Exercise5 extends View {
 
     private GestureDetector gestureDetector;
     private Paint paint;
     private List<Rect> rectanglesList;
 
-    public GesturesView(Context context) {
+    public Exercise5(Context context) {
         super(context);
 
         init();
     }
 
-    public GesturesView(Context context, @Nullable AttributeSet attrs) {
+    public Exercise5(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         init();
     }
 
-    public GesturesView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public Exercise5(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         init();
@@ -89,11 +89,9 @@ public class GesturesView extends View {
 
                 Rect newRectangle = new Rect(left, top, right, bottom);
 
-                for (Rect rect : rectanglesList) {
-
-                }
-
                 rectanglesList.add(newRectangle);
+
+                invalidate();
 
                 return true;
             }
@@ -119,9 +117,11 @@ public class GesturesView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        this.gestureDetector.onTouchEvent(event);
-        invalidate();
-        return true;
+        if (this.gestureDetector.onTouchEvent(event)) {
+            return true;
+        }
+
+        return super.onTouchEvent(event);
     }
 
     @Override
