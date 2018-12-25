@@ -38,10 +38,10 @@ public class Line {
         this.end = end;
     }
 
-    public void clear() {
+    public void reset() {
         setStart(null);
         setEnd(null);
-        setRemove(false);
+        this.remove = false;
         this.paint = Paints.getRandomColorPaint();
     }
 
@@ -53,12 +53,9 @@ public class Line {
         return remove;
     }
 
-    public void setRemove(boolean remove) {
-        this.remove = remove;
-
-        if (remove) {
-            this.paint = Paints.getErasePaint();
-        }
+    public void setToRemove() {
+        this.remove = true;
+        this.paint = Paints.getErasePaint();
     }
 
     public Paint getPaint() {

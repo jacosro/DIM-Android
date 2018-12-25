@@ -2,12 +2,13 @@ package com.jacosro.dim.exercise3;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.jacosro.dim.common.Paints;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Exercise3 extends View {
 
     private Map<Integer, Finger> fingers;
-    private Paint removePaint;
+    private Paint erasePaint;
 
     public Exercise3(Context context) {
         super(context);
@@ -39,13 +40,7 @@ public class Exercise3 extends View {
 
     private void init() {
         this.fingers = new ConcurrentHashMap<>();
-
-        this.removePaint = new Paint();
-        this.removePaint.setAntiAlias(true);
-        this.removePaint.setStrokeWidth(6f);
-        this.removePaint.setColor(Color.TRANSPARENT);
-        this.removePaint.setStyle(Paint.Style.STROKE);
-        this.removePaint.setStrokeJoin(Paint.Join.ROUND);
+        this.erasePaint = Paints.getErasePaint();
     }
 
 
@@ -90,7 +85,6 @@ public class Exercise3 extends View {
     public void onDraw(Canvas canvas) {
         for (Finger finger : fingers.values()) {
             List<Point> fingerPoints = finger.getPoints();
-            Paint fingerPaint = finger.getPaint();
 
             int numPoints = fingerPoints.size();
 
@@ -101,7 +95,7 @@ public class Exercise3 extends View {
                 canvas.drawLine(
                         from.x, from.y,
                         to.x, to.y,
-                        finger.isToRemove() ? removePaint : fingerPaint
+                        finger.getPaint()
                 );
             }
 

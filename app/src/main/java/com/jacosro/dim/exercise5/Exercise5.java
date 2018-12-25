@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
@@ -13,14 +14,18 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.jacosro.dim.common.Paints;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Exercise5 extends View {
 
     private GestureDetector gestureDetector;
     private Paint paint;
-    private List<Rect> rectanglesList;
+    private Map<Point, Rect> pointRectMap;
 
     public Exercise5(Context context) {
         super(context);
@@ -59,6 +64,22 @@ public class Exercise5 extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                Point center = new Point((int) e1.getX(), (int) e1.getY());
+                Point newCenter = new Point((int) e2.getX(), (int) e2.getY());
+
+                Rect rect = pointRectMap.get(center);
+
+                if (rect == null)  // Should not happen
+                    return true;
+
+                rect.bottom += (newCenter.y - center.y);
+                rect.left += (newCenter.x - center.x);
+                rect.top += (newCenter.y - center.y);
+                rect.right += (newCenter.x - center.x);
+
+                pointRectMap.remove(center);
+                pointRectMap.put(newCenter, rect);
+
                 return true;
             }
 
@@ -82,14 +103,16 @@ public class Exercise5 extends View {
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                int left = (int) (e.getX() - 30);
-                int top = (int) (e.getY() - 30);
-                int right = (int) (e.getX() + 30);
-                int bottom = (int) (e.getY() + 30);
+                Point center = new Point((int) e.getX(), (int) e.getY());
+
+                int left = center.x - 30;
+                int top = center.y - 30;
+                int right = center.x + 30;
+                int bottom = center.y + 30;
 
                 Rect newRectangle = new Rect(left, top, right, bottom);
 
-                rectanglesList.add(newRectangle);
+                pointRectMap.put(center, newRectangle);
 
                 invalidate();
 
@@ -105,14 +128,9 @@ public class Exercise5 extends View {
         this.gestureDetector = new GestureDetector(getContext(), gestureListener);
         this.gestureDetector.setOnDoubleTapListener(doubleTapListener);
 
-        this.rectanglesList = new ArrayList<>();
+        this.paint = Paints.getPaintWithColor(Color.BLUE);
 
-        this.paint = new Paint();
-        this.paint.setAntiAlias(true);
-        this.paint.setStrokeWidth(5f);
-        this.paint.setColor(Color.BLACK);
-        this.paint.setStyle(Paint.Style.STROKE);
-        this.paint.setStrokeJoin(Paint.Join.ROUND);
+        this.pointRectMap = new HashMap<>();
     }
 
     @Override
@@ -126,7 +144,7 @@ public class Exercise5 extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (Rect rect : rectanglesList) {
+        for (Rect rect : pointRectMap.values()) {
             canvas.drawRect(rect, paint);
         }
     }

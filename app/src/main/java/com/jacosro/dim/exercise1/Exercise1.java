@@ -2,7 +2,6 @@ package com.jacosro.dim.exercise1;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -10,9 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.jacosro.dim.common.Line;
-import com.jacosro.dim.common.Paints;
-
-import java.util.Random;
 
 public class Exercise1 extends View {
 
@@ -48,7 +44,7 @@ public class Exercise1 extends View {
             line.setEnd(new Point((int) event.getX(), (int) event.getY()));
 
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            line.setRemove(true);
+            line.setToRemove();
         }
 
         invalidate();
@@ -66,7 +62,7 @@ public class Exercise1 extends View {
             );
 
             if (line.isToRemove()) {
-                line.clear();
+                line.reset();
             }
         }
     }

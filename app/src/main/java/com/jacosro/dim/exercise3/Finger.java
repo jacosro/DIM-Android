@@ -5,6 +5,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Pair;
 
+import com.jacosro.dim.common.Paints;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,15 +21,7 @@ public class Finger {
     public Finger(int id) {
         this.id = id;
         this.points = new ArrayList<>();
-
-        Random rnd = new Random();
-
-        this.paint = new Paint();
-        this.paint.setAntiAlias(true);
-        this.paint.setStrokeWidth(6f);
-        this.paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-        this.paint.setStyle(Paint.Style.STROKE);
-        this.paint.setStrokeJoin(Paint.Join.ROUND);
+        this.paint = Paints.getRandomColorPaint();
     }
 
     public void addPoint(Point point) {
@@ -52,5 +46,6 @@ public class Finger {
 
     public void setToRemove() {
         this.toRemove = true;
+        this.paint = Paints.getErasePaint();
     }
 }
