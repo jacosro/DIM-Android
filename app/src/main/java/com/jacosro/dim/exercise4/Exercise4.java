@@ -5,31 +5,20 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.jacosro.dim.common.Line;
 import com.jacosro.dim.common.Paints;
-import com.jacosro.dim.exercise3.Finger;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Exercise4 extends View {
 
     private Map<Integer, Point> points;
-    private boolean valid;
 
     public Exercise4(Context context) {
         super(context);
@@ -75,7 +64,7 @@ public class Exercise4 extends View {
             for (int i = 0; i < pointers; i++) {
                 Point point = points.get(event.getPointerId(i));
 
-                if (point != null) { // finger should never be null
+                if (point != null) { // should never be null
                     point.set((int) event.getX(i), (int) event.getY(i));
                 }
             }

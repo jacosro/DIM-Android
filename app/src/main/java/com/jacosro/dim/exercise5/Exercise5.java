@@ -5,27 +5,28 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.jacosro.dim.common.Paints;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Exercise5 extends View {
 
+    private static final String TAG = "Exercise5";
+
+    private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
     private Paint paint;
-    private Map<Point, Rect> pointRectMap;
+    private List<Rect> rects;
+    private int rectSize = 100;
 
     public Exercise5(Context context) {
         super(context);
@@ -64,21 +65,20 @@ public class Exercise5 extends View {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                Point center = new Point((int) e1.getX(), (int) e1.getY());
-                Point newCenter = new Point((int) e2.getX(), (int) e2.getY());
+                if (scaleGestureDetector.isInProgress())
+                    return false;
 
-                Rect rect = pointRectMap.get(center);
+                for (Rect rect : rects) {
+                    if (rect.contains((int) e2.getX(), (int) e2.getY())
+                            || rect.contains((int) e1.getX(), (int) e1.getY())) {
 
-                if (rect == null)  // Should not happen
-                    return true;
+                        rect.offset((int) distanceX * -1, (int) distanceY * -1);
 
-                rect.bottom += (newCenter.y - center.y);
-                rect.left += (newCenter.x - center.x);
-                rect.top += (newCenter.y - center.y);
-                rect.right += (newCenter.x - center.x);
+                        break;
+                    }
+                }
 
-                pointRectMap.remove(center);
-                pointRectMap.put(newCenter, rect);
+                invalidate();
 
                 return true;
             }
@@ -105,14 +105,14 @@ public class Exercise5 extends View {
             public boolean onDoubleTap(MotionEvent e) {
                 Point center = new Point((int) e.getX(), (int) e.getY());
 
-                int left = center.x - 30;
-                int top = center.y - 30;
-                int right = center.x + 30;
-                int bottom = center.y + 30;
+                int left = center.x - rectSize;
+                int top = center.y - rectSize;
+                int right = center.x + rectSize;
+                int bottom = center.y + rectSize;
 
                 Rect newRectangle = new Rect(left, top, right, bottom);
 
-                pointRectMap.put(center, newRectangle);
+                rects.add(newRectangle);
 
                 invalidate();
 
@@ -125,26 +125,75 @@ public class Exercise5 extends View {
             }
         };
 
+        this.scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+            Rect rect;
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                for (Rect rect : rects) {
+                    int x = (int) detector.getFocusX();
+                    int y = (int) detector.getFocusY();
+
+                    double diagonal = rect.width() * Math.sqrt(2); // Pitágoras
+
+                    if (rect.contains(x, y)) {
+//                            && detector.getCurrentSpan() <= diagonal) {
+
+                        this.rect = rect;
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                int centerX = this.rect.centerX();
+                int centerY = this.rect.centerY();
+
+                int side = (int) (this.rect.width() * detector.getScaleFactor());
+                int distanceFromCenter = side / 2;
+
+                int left = centerX - distanceFromCenter;
+                int top = centerY - distanceFromCenter;
+                int right = centerX + distanceFromCenter;
+                int bottom = centerY + distanceFromCenter;
+
+                this.rect.set(
+                        left,
+                        top,
+                        right,
+                        bottom
+                );
+
+                invalidate();
+
+                return true;
+            }
+        });
+
         this.gestureDetector = new GestureDetector(getContext(), gestureListener);
         this.gestureDetector.setOnDoubleTapListener(doubleTapListener);
 
         this.paint = Paints.getPaintWithColor(Color.BLUE);
 
-        this.pointRectMap = new HashMap<>();
+        this.rects = new ArrayList<>();
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (this.gestureDetector.onTouchEvent(event)) {
-            return true;
-        }
-
-        return super.onTouchEvent(event);
+        boolean retVal = scaleGestureDetector.onTouchEvent(event);
+        retVal = gestureDetector.onTouchEvent(event) || retVal;
+        return retVal || super.onTouchEvent(event);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (Rect rect : pointRectMap.values()) {
+        for (Rect rect : rects) {
             canvas.drawRect(rect, paint);
         }
     }
